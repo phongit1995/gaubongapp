@@ -72,6 +72,6 @@ const StackNavigation = createStackNavigator({
     }
   
 },{
-    initialRouteName:'HomeScreen'
+    initialRouteName:'SingInScreen'
 })
-export default createAppContainer(StackNavigation) ;
+export default createAppContainer( StackNavigation) ;

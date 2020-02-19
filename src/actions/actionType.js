@@ -3,3 +3,4 @@ export const GET_STORE_IMAGE='GET_STORE_IMAGE'
 export const LOGIN_SUCCESS='LOGIN_SUCCESS'
 export const LOGOUT='LOGOUT'
 export const SET_STORE_IMAGE='SET_STORE_IMAGE';
+export const ADD_MORE_IMAGE='ADD_MORE_IMAGE'

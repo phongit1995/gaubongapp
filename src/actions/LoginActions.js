@@ -30,7 +30,6 @@ export const login =(username,password)=> async dispatch=>{
     }
 }
 export const check_login =()=> async(dispatch)=>{
-    await removeUser();
     let users = await getUser();
     if(users){
         dispatch(login_success(users));

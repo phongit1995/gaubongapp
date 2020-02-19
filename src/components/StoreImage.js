@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text , StyleSheet ,ImageBackground, StatusBar ,Image , TouchableOpacity ,FlatList} from 'react-native';
+import { View, Text , StyleSheet ,ImageBackground, StatusBar ,Image , TouchableOpacity ,FlatList ,Alert} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import {connect} from 'react-redux';
 import {logout_action} from './../actions/LoginActions';
-import {fecth_store_image} from './../actions/StoreImageAction';
+import {fecth_store_image,fetch_more_image} from './../actions/StoreImageAction';
 class StoreImage extends Component {
   constructor(props) {
     super(props);
@@ -48,7 +48,7 @@ class StoreImage extends Component {
       this.props.fetch_init_image();
   }
   render() {
-      console.log(this.props.StoreImage);
+      console.log(this.props.StoreImage.listImage);
       console.log(this.props.image);
     return (
       <View style={styles.container}>
@@ -85,26 +85,28 @@ class StoreImage extends Component {
             </View>
         </View>
         <View style={styles.footer}>
-        
-            <FlatList data={this.props.StoreImage} keyExtractor={(item,index)=>{return `${index}a`}}
+            <FlatList data={this.props.StoreImage.listImage} keyExtractor={(item,index)=>{return `${index}a`}}
             renderItem={({item})=>{
-               console.log('item'+ item);
                 if(item){
                     return (
                         <View style={styles.container_image}>
                             <View style={{flexDirection:'row',marginTop:10}}>
-                                <Image source={{uri:item.imageuser}} style={{width:30,height:30 , borderRadius:30}}></Image>
-                                <Text style={styles.name_post}>{item.userName}</Text>
+                                <Image source={{uri:item.userimage}} style={{width:30,height:30 , borderRadius:30}}></Image>
+                                <Text style={styles.name_post}>{item.nameUser?item.nameUser.trim():item.nameUser}</Text>
                             </View>
                             <Text style={styles.post_title}>{item.title}</Text>
                             <TouchableOpacity>
-                                <Image source={{uri:item.imagelink}} style={styles.images_post}></Image>
+                                <Image source={{uri:item.imageLin}} style={styles.images_post}></Image>
                             </TouchableOpacity>
                     </View>)
                 }
                
            }}
-            />
+           ref={ref => this.flatList = ref}
+           onEndReached={()=>this.props.fetch_more_store_image()}
+           refreshing={false}
+           onRefresh={()=>{this.props.fetch_init_image()}}
+             />
             
         </View>
       </View>
@@ -114,7 +116,7 @@ class StoreImage extends Component {
 const mapStateToProps = (state)=>{
     return {
         users:state.users,
-        StoreImage:StoreImage
+        StoreImage:state.StoreImage
     }
 }
 const mapDispathToProps = dispatch =>{
@@ -124,6 +126,9 @@ const mapDispathToProps = dispatch =>{
         },
         fetch_init_image:()=>{
             dispatch(fecth_store_image())
+        },
+        fetch_more_store_image:()=>{
+            dispatch(fetch_more_image())
         }
     }
 }
@@ -190,7 +195,8 @@ const styles = StyleSheet.create({
         color:'#FF00CC',
         fontWeight:'bold',
         fontSize:16,
-        marginLeft:10
+        marginLeft:20,
+        flex:1
     },
     post_title:{
         marginTop:10,

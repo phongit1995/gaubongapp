@@ -8,6 +8,8 @@ import {
   import { Provider,connect } from 'react-redux';
   import RootStack from './RootStack';
   import usersReducer from './reducers/user';
+  import thunk from 'redux-thunk';
+  import StoreImageReducers from './reducers/storeimage';
   const App = createReduxContainer(RootStack, 'root');
   const middleware = createReactNavigationReduxMiddleware(
     state => state.nav,
@@ -17,14 +19,15 @@ import {
  
   const Reducers = combineReducers({
     nav: navReducer,
-    usersReducer:usersReducer
+    users:usersReducer,
+    StoreImage:StoreImageReducers
   })
   const mapStateToProps = state => ({
     state: state.nav,
   });
    
   const AppWithNavigationState = connect(mapStateToProps)(App);
-  const store = createStore(Reducers, applyMiddleware(middleware));
+  const store = createStore(Reducers, applyMiddleware(middleware,thunk));
   class Root extends Component {
     render(){
       return <Provider store={store}>

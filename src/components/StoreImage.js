@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { View, Text , StyleSheet ,ImageBackground, StatusBar ,Image , TouchableOpacity ,FlatList} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
-export default class StoreImage extends Component {
+import {connect} from 'react-redux';
+import {logout_action} from './../actions/LoginActions';
+import {fecth_store_image} from './../actions/StoreImageAction';
+class StoreImage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -41,8 +44,12 @@ export default class StoreImage extends Component {
   renderItem= ()=>{
 
   }
+  componentDidMount(){
+      this.props.fetch_init_image();
+  }
   render() {
-      console.log(this.state.images);
+      console.log(this.props.StoreImage);
+      console.log(this.props.image);
     return (
       <View style={styles.container}>
         <StatusBar barStyle='light-content'></StatusBar>
@@ -55,12 +62,12 @@ export default class StoreImage extends Component {
                     <View style={styles.imageBackGround_Container}>
                         <View style={styles.logo}>
                             <Image
-                                source={require('./../assets/avatar_default.png')}
-                                style={{width:80,height:80}}
+                                source={{uri:this.props.users.image}}
+                                style={{width:80,height:80,borderRadius:80}}
                             />
                         </View>
                         <View style={styles.user}>
-                            <Text numberOfLines={1} style={styles.user_name}>Nguyễn Đình Phong</Text>
+                            <Text numberOfLines={1} style={styles.user_name}>{this.props.users.username}</Text>
                             <View style={styles.action}>
                                 <TouchableOpacity style={styles.icon}>
                                     <Feather name='image' size={20} color={'white'}/>
@@ -68,7 +75,7 @@ export default class StoreImage extends Component {
                                 <TouchableOpacity style={styles.icon}>
                                     <Feather name='camera' size={20} color={'white'}/>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.icon}>
+                                <TouchableOpacity style={styles.icon} onPress={()=>{this.props._logout()}}>
                                     <MaterialCommunityIcons name='logout' size={20} color={'white'}/>
                                 </TouchableOpacity>
                             </View>
@@ -79,20 +86,23 @@ export default class StoreImage extends Component {
         </View>
         <View style={styles.footer}>
         
-            <FlatList data={this.state.images} keyExtractor={(item,index)=>{return `${index}a`}}
-           renderItem={({item})=>{
-               return (
-                <View style={styles.container_image}>
-                    <View style={{flexDirection:'row',marginTop:10}}>
-                        <Image source={{uri:item.imageuser}} style={{width:30,height:30 , borderRadius:30}}></Image>
-                        <Text style={styles.name_post}>{item.userName}</Text>
-                    </View>
-                    <Text style={styles.post_title}>{item.title}</Text>
-                    <TouchableOpacity>
-                        <Image source={{uri:item.imagelink}} style={styles.images_post}></Image>
-                    </TouchableOpacity>
-            </View> 
-               )
+            <FlatList data={this.props.StoreImage} keyExtractor={(item,index)=>{return `${index}a`}}
+            renderItem={({item})=>{
+               console.log('item'+ item);
+                if(item){
+                    return (
+                        <View style={styles.container_image}>
+                            <View style={{flexDirection:'row',marginTop:10}}>
+                                <Image source={{uri:item.imageuser}} style={{width:30,height:30 , borderRadius:30}}></Image>
+                                <Text style={styles.name_post}>{item.userName}</Text>
+                            </View>
+                            <Text style={styles.post_title}>{item.title}</Text>
+                            <TouchableOpacity>
+                                <Image source={{uri:item.imagelink}} style={styles.images_post}></Image>
+                            </TouchableOpacity>
+                    </View>)
+                }
+               
            }}
             />
             
@@ -101,6 +111,23 @@ export default class StoreImage extends Component {
     );
   }
 }
+const mapStateToProps = (state)=>{
+    return {
+        users:state.users,
+        StoreImage:StoreImage
+    }
+}
+const mapDispathToProps = dispatch =>{
+    return {
+        _logout:()=>{
+            dispatch(logout_action())
+        },
+        fetch_init_image:()=>{
+            dispatch(fecth_store_image())
+        }
+    }
+}
+export default connect(mapStateToProps,mapDispathToProps)(StoreImage) ;
 const styles = StyleSheet.create({
     container:{
         flex:1,

@@ -3,7 +3,9 @@ import { View, Text ,StyleSheet , TextInput ,TouchableOpacity} from 'react-nativ
 import FontAnwsome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
-export default class SingInComponent extends Component {
+import {connect} from 'react-redux';
+import {login,check_login} from './../actions/LoginActions';
+class SingInComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -31,6 +33,12 @@ export default class SingInComponent extends Component {
         showPassWord:!this.state.showPassWord
     })
   }
+  loginAction =()=>{
+      this.props._login(this.state.username,this.state.password);
+  }
+  componentDidMount(){
+      this.props._check_login();
+  }
   render() {
     return (
       <View style={styles.container}>
@@ -56,12 +64,13 @@ export default class SingInComponent extends Component {
                     <TextInput placeholder="Mật Khẩu..." 
                         style={styles.TextInput}
                         secureTextEntry={!this.state.showPassWord}
+                        onChangeText={(text)=>this.setState({password:text})}
                     /> 
                     {
                         this.state.showPassWord?<Feather name='eye' size={20} color='gray' onPress={this.ShowPassword}/>:<Feather name='eye-off' size={20} color='gray' onPress={this.ShowPassword}/>
                     }
                 </View>
-                <TouchableOpacity onPress={()=>{this.props.navigation.navigate('HomeScreen')}}>
+                <TouchableOpacity onPress={this.loginAction}>
                     <LinearGradient  style={styles.signInButton}  colors={['#5db8fe', '#39cff2']}>
                         <Text style={styles.textSignIn}>
                         
@@ -76,6 +85,18 @@ export default class SingInComponent extends Component {
     );
   }
 }
+const mapDispatchToProps = (dispatch)=>{
+    return {
+        _login:(username,password)=>{
+            dispatch(login(username,password))
+        },
+        _check_login:()=>{
+            dispatch(check_login())
+        }
+
+    }
+}
+export default connect(null,mapDispatchToProps)(SingInComponent);
 const styles = StyleSheet.create({
     container:{
         flex:1,
